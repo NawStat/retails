@@ -1,0 +1,46 @@
+version: "3.4"
+x-proxy-vars: &proxy_vars
+  http_proxy:  http://krm-proxy.ads.local:8080
+  https_proxy: http://krm-proxy.ads.local:8080
+  HTTP_PROXY:  http://krm-proxy.ads.local:8080
+  HTTPS_PROXY: http://krm-proxy.ads.local:8080
+
+x-no-proxy-vars: &no_proxy_vars
+  http_proxy:  ""
+  https_proxy: ""
+  HTTP_PROXY:  ""
+  HTTPS_PROXY: ""
+
+services:
+
+  mongo:
+    image: mongo
+    container_name: mongo_retails
+    restart: always
+
+    volumes:
+#      - ${PWD}/_data/mongo:/data/db
+      - ${PWD}/docker/_mongo/fixtures:/import
+      - ${PWD}/docker/_mongo/scripts/init.sh:/docker-entrypoint-initdb.d/setup.sh
+    ports:
+      - 27017:27017
+
+  web:
+    build: .
+    environment:
+      MONGODB_PORT: 27017
+      MONGODB_IP: "mongo"
+      MONGOD_COLLECTION: "collection"
+      MONGODB_DB: "retails2"
+#    command: "/entrypoint.sh runserver"
+#    command: bash -c "python /var/web/xlsx_to_mongodb.py '/var/web/data/OnlineRetail.xlsx' 'Online Retail' mongo 'retails2' 27017  \
+    command: bash -c "python /var/web/xlsx_to_mongodb.py '/var/web/data/OnlineRetail.xlsx' 'Online Retail'    \
+            && python /var/web/manage.py  migrate \
+            &&  python /var/web/manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ".:/var/web"
+      - "./data/OnlineRetail.xlsx:/var/data/data.xlsx"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
