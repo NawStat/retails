@@ -1,7 +1,7 @@
 FROM python:3.7
-
-ENV http_proxy http://proxy.dsi.scom:8080
-ENV https_proxy http://proxy.dsi.scom:8080
+# # Proxy settings
+# ENV http_proxy http://...
+# ENV https_proxy http://...
 
 WORKDIR /var/web
 RUN mkdir -p "/var/web"
