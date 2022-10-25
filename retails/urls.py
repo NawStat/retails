@@ -7,4 +7,5 @@ urlpatterns = [
     # path('ration_price_quantity/', views.listing_invoice_ratio_view),
     path('groupeby_invoice_ratio/', views.listing_invoice_ratio_view),
     path('groupeby_invoice/', views.groupeby_invoice_view),
+    path('data_visualisation/', views.ProductDistribution.as_view()),
 ]

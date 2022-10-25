@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, desc, sum, round
-
+from pyspark.sql.functions import col, desc, sum, round, filter
+IMAGE_PATH = 'retails/templates/images/'
 
 def _spark_session(database, collection, ip, port=27017):
     """
@@ -41,6 +41,7 @@ class spark_computations:
         return: pyspark.sql.group.GroupedData'
         """
         return self.df.groupBy(field)
+
     def get_data(self):
         """
         return a collection of all data
@@ -67,3 +68,18 @@ class spark_computations:
         """
         data = self.df.withColumn('ratio', round(col('UnitPrice')/col('Quantity'), 3)).select('InvoiceNo', 'ratio')
         return data.collect()
+
+    def image_product_distribution_by_country(self, stockid):
+        """
+        Chart pie of product distrubution by contire
+        """
+        try:
+            d = self.df.filter(self.df.StockCode == 22728).groupby('Country').sum('Quantity').\
+                withColumnRenamed("SUM(Quantity)", "Total Quantity")
+            p = d.toPandas()
+            p = p.set_index('Country')
+            img = p.plot.pie(y='Total Quantity', figsize=(10, 10), autopct='%.2f', labeldistance=None,
+                             title='Product distribution by country')
+            img.get_figure().savefig(IMAGE_PATH+str(stockid))
+        except Exception as e:
+            print(e)

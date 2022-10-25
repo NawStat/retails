@@ -126,8 +126,10 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # mongobd enviroment variables
-PORT = os.environ.get('MONGODB_PORT', 27000)
+
+PORT = os.environ.get('MONGODB_PORT', 27017)
 IP = os.environ.get('MONGODB_IP', 'mongo')
+IP = os.environ.get('MONGODB_IP', "192.168.144.2")
 COLLECTION = os.environ.get('MONGOD_COLLECTION', 'collection')
 DATABASE_NAME = os.environ.get('MONGOD_BD', 'retails2')
 
@@ -137,7 +139,8 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR,
                  os.path.join(BASE_DIR, 'immo/templates'),
-                 os.path.join(BASE_DIR, 'retails/templates')],
+                 os.path.join(BASE_DIR, 'retails/templates'),
+                 os.path.join(BASE_DIR, 'retails/templates/images')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
